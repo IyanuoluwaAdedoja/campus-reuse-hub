@@ -10,17 +10,10 @@ export default function Home() {
 
   const [listings, setListings] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
 
  useEffect(() => {
-
   fetchListings();
-
-  const interval = setInterval(() => {
-    fetchListings();
-  }, 2000);
-
-  return () => clearInterval(interval);
-
 }, []);
 
   const fetchListings = async () => {
@@ -37,138 +30,306 @@ export default function Home() {
     setListings(data || []);
   };
 
-  const filteredListings = listings.filter((item) =>
-    item.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredListings = listings.filter((item) => {
+
+  const matchesSearch =
+    item.title.toLowerCase().includes(searchTerm.toLowerCase());
+
+  const matchesCategory =
+    selectedCategory === "" ||
+    item.category === selectedCategory;
+
+  return matchesSearch && matchesCategory;
+
+});
 
   return (
     <main className="min-h-screen bg-gray-50">
 
       <Navbar />
 
-      <section className="flex flex-col items-center justify-center text-center px-6 py-24">
+     <section className="relative overflow-hidden bg-gradient-to-br from-green-50 to-white px-6 py-28">
 
-        <h2 className="text-6xl font-bold text-gray-900 max-w-4xl leading-tight">
-          Buy, Sell & Reuse Student Essentials
-        </h2>
+  <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
 
-        <p className="mt-6 text-lg text-gray-600 max-w-2xl">
-          A campus marketplace where students can exchange textbooks,
-          gadgets, furniture, fashion, and more.
+    <div>
+
+      <div className="inline-flex items-center bg-green-100 text-green-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
+        ♻️ Sustainable Student Marketplace
+      </div>
+
+      <h1 className="text-6xl md:text-7xl font-bold text-gray-900 leading-tight">
+
+        Buy & Sell
+        <span className="text-green-700"> Campus Essentials</span>
+
+      </h1>
+
+      <p className="mt-8 text-xl text-gray-600 leading-relaxed max-w-2xl">
+
+        The smartest way for students to buy affordable gadgets,
+        textbooks, furniture, fashion, and hostel essentials.
+
+      </p>
+
+      <div className="mt-10 flex flex-wrap gap-4">
+
+        <a
+          href="#listings"
+          className="bg-green-700 text-white px-8 py-4 rounded-2xl hover:bg-green-800 transition font-semibold shadow-lg"
+        >
+          Explore Listings
+        </a>
+
+        <Link
+          href="/upload"
+          className="bg-white border border-gray-300 px-8 py-4 rounded-2xl hover:bg-gray-100 transition font-semibold"
+        >
+          Sell an Item
+        </Link>
+
+      </div>
+
+      <div className="mt-14 grid grid-cols-3 gap-8">
+
+        <div>
+          <h3 className="text-3xl font-bold text-gray-900">500+</h3>
+          <p className="text-gray-600 mt-2">Student Listings</p>
+        </div>
+
+        <div>
+          <h3 className="text-3xl font-bold text-gray-900">24/7</h3>
+          <p className="text-gray-600 mt-2">Marketplace Access</p>
+        </div>
+
+        <div>
+          <h3 className="text-3xl font-bold text-gray-900">100%</h3>
+          <p className="text-gray-600 mt-2">Campus Focused</p>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div className="relative">
+
+      <img
+        src="/students-hero.jpg"
+        alt="Students"
+        className="rounded-[2rem] shadow-2xl object-cover h-[650px] w-full border border-white"
+      />
+
+      <div className="absolute bottom-6 left-6 bg-white rounded-3xl shadow-xl p-6 w-64">
+        <p className="text-sm text-gray-500">
+          Latest Listing
         </p>
 
-        <div className="mt-10 flex gap-4">
+        <h4 className="font-bold text-lg mt-2">
+          HP EliteBook Laptop
+        </h4>
 
-          <a
-  href="#listings"
-  className="bg-green-700 text-white px-6 py-3 rounded-xl hover:bg-green-800 transition"
->
-  Explore Listings
-</a>
+        <p className="text-green-700 font-semibold mt-2">
+          ₦250,000
+        </p>
 
-          <Link
-  href="/upload"
-  className="border border-gray-300 px-6 py-3 rounded-xl hover:bg-gray-100 transition"
->
-  Sell an Item
-</Link>
+      </div>
 
-        </div>
+    </div>
 
-      </section>
+  </div>
 
-      <section id="listings" className="px-8 pb-20">
-
-        <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-sm p-4 flex flex-col md:flex-row gap-4">
-
-          <input
-            type="text"
-            placeholder="Search for laptops, textbooks, furniture..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="flex-1 border border-gray-300 rounded-xl px-4 py-3 outline-none"
-          />
-
-          <button className="bg-green-700 text-white px-6 py-3 rounded-xl hover:bg-green-800 transition">
-            Search
-          </button>
-
-        </div>
-
-      </section>
+</section>
 
       <section className="px-8 pb-16">
 
-        <h3 className="text-3xl font-bold text-gray-900 mb-8">
-          Browse Categories
-        </h3>
+        <div className="mb-10">
 
+  <input
+    type="text"
+    placeholder="Search for laptops, textbooks, furniture..."
+    value={searchTerm}
+    onChange={(e) => setSearchTerm(e.target.value)}
+    className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 text-lg shadow-sm"
+  />
+
+</div>
+
+<button
+  onClick={() => setSelectedCategory("")}
+  className="mb-8 text-green-700 font-semibold hover:underline"
+>
+  View All Listings
+</button>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
 
-          <div className="bg-white rounded-2xl shadow-sm p-6 text-center hover:shadow-md transition cursor-pointer">
-            <div className="text-5xl mb-4">💻</div>
-            <h4 className="font-semibold text-lg">
-              Electronics
-            </h4>
-          </div>
+          <button
+  onClick={() => setSelectedCategory("Electronics")}
+  className="bg-white rounded-2xl shadow-sm p-6 text-center hover:shadow-lg hover:-translate-y-1 transition cursor-pointer"
+>
+  <div className="text-5xl mb-4">💻</div>
+  <h4 className="font-semibold text-lg">
+    Electronics
+  </h4>
+</button>
 
-          <div className="bg-white rounded-2xl shadow-sm p-6 text-center hover:shadow-md transition cursor-pointer">
-            <div className="text-5xl mb-4">📚</div>
-            <h4 className="font-semibold text-lg">
-              Textbooks
-            </h4>
-          </div>
+<button
+  onClick={() => setSelectedCategory("Textbooks")}
+  className="bg-white rounded-2xl shadow-sm p-6 text-center hover:shadow-lg hover:-translate-y-1 transition cursor-pointer"
+>
+  <div className="text-5xl mb-4">📚</div>
+  <h4 className="font-semibold text-lg">
+    Textbooks
+  </h4>
+</button>
 
-          <div className="bg-white rounded-2xl shadow-sm p-6 text-center hover:shadow-md transition cursor-pointer">
-            <div className="text-5xl mb-4">🪑</div>
-            <h4 className="font-semibold text-lg">
-              Furniture
-            </h4>
-          </div>
+<button
+  onClick={() => setSelectedCategory("Furniture")}
+  className="bg-white rounded-2xl shadow-sm p-6 text-center hover:shadow-lg hover:-translate-y-1 transition cursor-pointer"
+>
+  <div className="text-5xl mb-4">🪑</div>
+  <h4 className="font-semibold text-lg">
+    Furniture
+  </h4>
+</button>
 
-          <div className="bg-white rounded-2xl shadow-sm p-6 text-center hover:shadow-md transition cursor-pointer">
-            <div className="text-5xl mb-4">👕</div>
-            <h4 className="font-semibold text-lg">
-              Fashion
-            </h4>
-          </div>
+<button
+  onClick={() => setSelectedCategory("Fashion")}
+  className="bg-white rounded-2xl shadow-sm p-6 text-center hover:shadow-lg hover:-translate-y-1 transition cursor-pointer"
+>
+  <div className="text-5xl mb-4">👕</div>
+  <h4 className="font-semibold text-lg">
+    Fashion
+  </h4>
+</button>
 
         </div>
 
       </section>
 
-      <section className="px-8 pb-20">
+      <section id="listings" className="px-6 md:px-12 pb-24">
 
         <h3 className="text-3xl font-bold text-gray-900 mb-8">
           Featured Listings
         </h3>
+        <p className="text-gray-500 mb-10 text-lg">
+  Discover affordable student deals across campus.
+</p>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {filteredListings.length === 0 ? (
 
-          {filteredListings.map((item, index) => (
+  <div className="bg-white rounded-3xl p-12 text-center shadow-sm">
 
-            <Link
-              key={index}
-              href={`/listing/${encodeURIComponent(
-  item.title.toLowerCase().replace(/\s+/g, "-")
-)}`}
-            >
+    <h3 className="text-2xl font-bold mb-3">
+      No Listings Found
+    </h3>
 
-              <ListingCard
-                title={item.title}
-                description={item.description}
-                price={item.price}
-                image={item.image}
-              />
+    <p className="text-gray-500">
+      Try another search or category.
+    </p>
 
-            </Link>
+  </div>
 
-          ))}
+) : (
 
-        </div>
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+
+    {filteredListings.map((item, index) => (
+
+      <Link
+        key={index}
+        href={`/listing/${encodeURIComponent(
+          item.title.toLowerCase().replace(/\s+/g, "-")
+        )}`}
+      >
+
+        <ListingCard
+          title={item.title}
+          description={item.description}
+          price={item.price}
+          image={item.image}
+        />
+
+      </Link>
+
+    ))}
+
+  </div>
+
+)}
+
+<section className="px-8 py-20 bg-gray">
+
+  <div className="max-w-5xl mx-auto text-center">
+
+    <h2 className="text-4xl font-bold text-gray-900">
+      Why CampusReuseHub?
+    </h2>
+
+    <p className="mt-6 text-xl text-gray-600 leading-relaxed">
+
+      Students constantly buy new items while perfectly usable
+      textbooks, gadgets, furniture and fashion sit unused.
+
+      CampusReuseHub helps students save money, reduce waste,
+      and connect with buyers and sellers within campus communities.
+
+    </p>
+
+  </div>
+
+</section>
 
       </section>
 
+<footer className="bg-gray-900 text-white mt-20">
+
+  <div className="max-w-7xl mx-auto px-6 py-12">
+
+    <div className="grid md:grid-cols-3 gap-10">
+
+      <div>
+
+        <h3 className="text-2xl font-bold text-green-400">
+          CampusReuseHub
+        </h3>
+
+        <p className="text-gray-400 mt-3">
+          Nigeria's student marketplace.
+        </p>
+
+      </div>
+
+      <div>
+
+        <h4 className="font-semibold mb-3">
+          Quick Links
+        </h4>
+
+        <div className="space-y-2 text-gray-400">
+          <p>Home</p>
+          <p>Sell Item</p>
+          <p>My Listings</p>
+        </div>
+
+      </div>
+
+      <div>
+
+        <h4 className="font-semibold mb-3">
+          Contact
+        </h4>
+
+        <p className="text-gray-400">
+          support@campusreusehub.store
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</footer> 
     </main>
   );
 }

@@ -15,17 +15,26 @@ export default function SignupPage() {
 
     e.preventDefault();
 
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
+  email,
+  password,
+});
+
+if (error) {
+  alert(error.message);
+  return;
+}
+
+await supabase
+  .from("users")
+  .insert([
+    {
+      id: data.user?.id,
       email,
-      password,
-    });
+    },
+  ]);
 
-    if (error) {
-      alert(error.message);
-      return;
-    }
-
-    alert("Account created successfully!");
+alert("Account created successfully!");
 
     router.push("/login");
   };
