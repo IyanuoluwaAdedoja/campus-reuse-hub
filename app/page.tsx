@@ -58,7 +58,7 @@ export default function Home() {
         ♻️ Sustainable Student Marketplace
       </div>
 
-      <h1 className="text-6xl md:text-7xl font-bold text-gray-900 leading-tight">
+      <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-gray-900 leading-tight">
 
         Buy & Sell
         <span className="text-green-700"> Campus Essentials</span>
@@ -116,24 +116,10 @@ export default function Home() {
       <img
         src="/students-hero.jpg"
         alt="Students"
-        className="rounded-[2rem] shadow-2xl object-cover h-[650px] w-full border border-white"
+        className="rounded-[2rem] shadow-2xl object-cover h-[350px] md:h-[650px] w-full border border-white"
       />
 
-      <div className="absolute bottom-6 left-6 bg-white rounded-3xl shadow-xl p-6 w-64">
-        <p className="text-sm text-gray-500">
-          Latest Listing
-        </p>
-
-        <h4 className="font-bold text-lg mt-2">
-          HP EliteBook Laptop
-        </h4>
-
-        <p className="text-green-700 font-semibold mt-2">
-          ₦250,000
-        </p>
-
-      </div>
-
+      
     </div>
 
   </div>
@@ -257,7 +243,10 @@ export default function Home() {
 
 )}
 
-<section className="px-8 py-20 bg-gray">
+<section
+  id="about"
+  className="px-8 py-20 bg-gray-50"
+>
 
   <div className="max-w-5xl mx-auto text-center">
 
