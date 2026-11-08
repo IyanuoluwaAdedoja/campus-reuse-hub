@@ -5,51 +5,62 @@ import { supabase } from "@/app/lib/supabase";
 import { useRouter } from "next/navigation";
 
 export default function SignupPage() {
-
   const router = useRouter();
 
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSignup = async (e: React.FormEvent) => {
-
     e.preventDefault();
 
     const { data, error } = await supabase.auth.signUp({
-  email,
-  password,
-});
-
-if (error) {
-  alert(error.message);
-  return;
-}
-
-await supabase
-  .from("users")
-  .insert([
-    {
-      id: data.user?.id,
       email,
-    },
-  ]);
+      password,
+    });
 
-alert("Account created successfully!");
+    if (error) {
+      alert(error.message);
+      return;
+    }
 
+    const { error: userError } = await supabase
+      .from("users")
+      .insert([
+        {
+  id: data.user?.id,
+  full_name: name,
+  email,
+},
+      ]);
+
+    if (userError) {
+      alert(userError.message);
+      return;
+    }
+
+    alert("Account created successfully!");
     router.push("/login");
   };
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-gray-50 px-6">
-
       <form
         onSubmit={handleSignup}
         className="bg-white p-8 rounded-2xl shadow-sm w-full max-w-md space-y-6"
       >
-
         <h1 className="text-3xl font-bold text-center">
           Create Account
         </h1>
+
+        <input
+          type="text"
+          placeholder="Full Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="w-full border border-gray-300 rounded-xl px-4 py-3"
+          required
+        />
 
         <input
           type="email"
@@ -57,6 +68,7 @@ alert("Account created successfully!");
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="w-full border border-gray-300 rounded-xl px-4 py-3"
+          required
         />
 
         <input
@@ -65,6 +77,7 @@ alert("Account created successfully!");
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           className="w-full border border-gray-300 rounded-xl px-4 py-3"
+          required
         />
 
         <button
@@ -73,9 +86,7 @@ alert("Account created successfully!");
         >
           Sign Up
         </button>
-
       </form>
-
     </main>
   );
 }

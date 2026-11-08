@@ -11,7 +11,7 @@ export default function UploadPage() {
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
-  const [image, setImage] = useState<File | null>(null);
+  const [images, setImages] = useState<File[]>([]);
 
   const [category, setCategory] = useState("");
   const [condition, setCondition] = useState("");
@@ -32,55 +32,60 @@ export default function UploadPage() {
       return;
     }
 
-    if (!image) {
-      alert("Please select an image");
-      return;
-    }
+    if (images.length === 0) {
+  alert("Please select at least one image");
+  return;
+}
 
-    const fileName = `${Date.now()}-${image.name}`;
+const slug = title
+  .toLowerCase()
+  .replace(/\s+/g, "-");
 
-    const slug = title
-      .toLowerCase()
-      .replace(/\s+/g, "-");
+    const imageUrls: string[] = [];
 
-    const { error: uploadError } = await supabase.storage
-      .from("listing-images")
-      .upload(fileName, image);
+for (const image of images) {
+  const fileName = `${user.id}/${Date.now()}-${crypto.randomUUID()}-${image.name}`;
 
-    if (uploadError) {
-      console.log(uploadError);
-      alert("Image upload failed");
-      return;
-    }
+  const { error: uploadError } = await supabase.storage
+    .from("listing-images")
+    .upload(fileName, image);
 
-    const { data } = supabase.storage
-      .from("listing-images")
-      .getPublicUrl(fileName);
+  if (uploadError) {
+    console.log(uploadError);
+    alert("Image upload failed");
+    return;
+  }
 
-    const imageUrl = data.publicUrl;
+  const { data } = supabase.storage
+    .from("listing-images")
+    .getPublicUrl(fileName);
 
-    const { error } = await supabase
-      .from("listings")
-      .insert([
-        {
-          title,
-          price,
-          description,
-          category,
-          condition,
-          location,
-          whatsapp,
-          image: imageUrl,
-          slug,
-          user_id: user.id,
-        },
-      ]);
+  imageUrls.push(data.publicUrl);
+}
+
+const { error } = await supabase
+  .from("listings")
+  .insert([
+    {
+      title,
+      price,
+      description,
+      category,
+      condition,
+      location,
+      whatsapp,
+      image: imageUrls[0],   // temporary, keeps old pages working
+      images: imageUrls,      // new multiple images column
+      slug,
+      user_id: user.id,
+    },
+  ]);;
 
     if (error) {
-      console.log(error);
-      alert("Something went wrong");
-      return;
-    }
+  console.log(error);
+  alert(error.message);
+  return;
+}
 
     alert("Listing uploaded successfully!");
 
@@ -177,16 +182,17 @@ export default function UploadPage() {
           />
 
           <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => {
-              if (e.target.files && e.target.files[0]) {
-                setImage(e.target.files[0]);
-              }
-            }}
-            className="w-full border border-gray-300 rounded-2xl px-4 py-3 outline-none"
-            required
-          />
+  type="file"
+  accept="image/*"
+  multiple
+  onChange={(e) => {
+    if (e.target.files) {
+      setImages(Array.from(e.target.files).slice(0, 5));
+    }
+  }}
+  className="w-full border border-gray-300 rounded-2xl px-4 py-3 outline-none"
+  required
+/>
 
           <button
             type="submit"

@@ -9,6 +9,7 @@ export default function ListingPage() {
   const params = useParams();
 
   const [listing, setListing] = useState<any>(null);
+  const [selectedImage, setSelectedImage] = useState("");
 
   useEffect(() => {
     fetchListing();
@@ -29,6 +30,12 @@ export default function ListingPage() {
     }
 
     setListing(data);
+
+if (data.images && data.images.length > 0) {
+  setSelectedImage(data.images[0]);
+} else {
+  setSelectedImage(data.image);
+}
   };
 
   if (!listing) {
@@ -61,13 +68,29 @@ export default function ListingPage() {
           <div>
             <div className="bg-white rounded-3xl overflow-hidden shadow-md border border-gray-100">
               <img
-                src={listing.image}
-                alt={listing.title}
-                className="w-full h-[600px] object-cover"
-              />
+  src={selectedImage}
+  alt={listing.title}
+  className="w-full h-[600px] object-cover"
+/>
             </div>
           </div>
-
+{listing.images && listing.images.length > 0 && (
+  <div className="flex gap-3 mt-4 overflow-x-auto">
+    {listing.images.map((img: string, index: number) => (
+      <img
+        key={index}
+        src={img}
+        alt={`Image ${index + 1}`}
+        onClick={() => setSelectedImage(img)}
+        className={`w-24 h-24 object-cover rounded-xl cursor-pointer border-2 ${
+          selectedImage === img
+            ? "border-green-600"
+            : "border-transparent"
+        }`}
+      />
+    ))}
+  </div>
+)}
           <div>
 
             <div className="flex flex-wrap gap-3 mb-6">
